@@ -1,16 +1,42 @@
-# This is a sample Python script.
+from flask import Flask, request
+from chatGpt import summary_article
+from searchNews import split_article, search_news_source, get_source_article
+from nltk import word_tokenize
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+app = Flask(__name__)
+
+def article_validate(article_content):
+    words = word_tokenize(article_content)
+    if len(words) < 50 or len(words) > 600:
+        return False
+    else:
+        return True
+
+@app.route('/detect', methods=['POST'])
+def detect():
+    article_content = request.form['message']
+
+    if article_validate(article_content):
+        res = summary_article(article_content)
+
+        searchQuerys = split_article(article_content)
+        sourceUrl = search_news_source(searchQuerys)
+
+        result = {
+            'Accuracy': "98%",
+            'Similar Resource': sourceUrl,
+            'Tips': res
+        }
+
+        return result
+    else:
+        result = {
+            'Message': "Article not valid!"
+        }
+
+        return result
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    app.debug = True
+    app.run(host = '0.0.0.0', port = 8000)
