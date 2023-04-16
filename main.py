@@ -6,7 +6,7 @@ from searchNews import split_article, search_news_source, get_source_article
 from nltk import word_tokenize
 nltk.download('punkt')
 app = Flask(__name__)
-
+.
 def article_validate(article_content):
     words = word_tokenize(article_content)
     if len(words) < 50 or len(words) > 600:
