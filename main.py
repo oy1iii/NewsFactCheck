@@ -1,8 +1,10 @@
+import nltk
 from flask import Flask, request
 from chatGpt import summary_article
+import dbManage
 from searchNews import split_article, search_news_source, get_source_article
 from nltk import word_tokenize
-
+nltk.download('punkt')
 app = Flask(__name__)
 
 def article_validate(article_content):
@@ -27,6 +29,8 @@ def detect():
             'Similar Resource': sourceUrl,
             'Tips': res
         }
+
+        dbManage.save_record()
 
         return result
     else:
