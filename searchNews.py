@@ -6,7 +6,6 @@ from lxml.html import fromstring
 from googlesearch import search
 from bs4 import BeautifulSoup
 from collections import Counter
-
 def search_news_source(searchQuerys):
     sources = []
     for query in searchQuerys:
@@ -30,6 +29,8 @@ def split_article(article):
     return searchQuerys
 
 def get_source_article(sourceUrl):
+    newsApiKey = "582d63a79f374e02935035cc212cdb2b"
+
     content = requests.get(sourceUrl)
     soup_article = BeautifulSoup(content.content, 'html.parser')
 
