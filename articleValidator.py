@@ -8,4 +8,4 @@ def article_format_validate(article_content):
         return True
 
 def article_format_clear(article_content):
-    return  article_content.strip()
+    return article_content.strip()

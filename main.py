@@ -1,21 +1,21 @@
 from flask import Flask, request
 from chatGpt import summary_article
-import dbManage
+# import dbManage
 import searchNews
 import articleValidator
 
 app = Flask(__name__)
-@app.route('/check', methods=['POST'])
+@app.route('/check', methods=['GET'])
 def checkNews():
     article_content = request.form['message']
 
     if articleValidator.article_format_validate(article_content):
         article_summary = summary_article(articleValidator.article_format_clear(article_content))
-        sourceUrl = searchNews.search_news_source(article_summary)
+        related_news = searchNews.get_news(article_summary)
 
         result = {
             'Accuracy': "98%",
-            'Similar Resource': sourceUrl,
+            'Related News': related_news,
             'Remarks': article_summary
         }
 
