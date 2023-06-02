@@ -6,7 +6,9 @@ import nltk
 from matplotlib import pyplot as plt
 from nltk import PorterStemmer, WordNetLemmatizer
 from nltk.corpus import stopwords
+import seaborn as sns
 
+from keras.models import load_model
 # test_filename = 'test.csv'
 # train_filename = 'train.csv'
 # # valid_filename = 'valid.csv'
@@ -27,7 +29,7 @@ from nltk.corpus import stopwords
 # Drop not required columns
 # train_df = train_df.drop(["title", "subject", "date"], axis=1)
 
-train_df = pd.read_csv('WELFake_Dataset.csv')
+train_df = pd.read_csv(r'C:\Users\user\Documents\NewsFactCheck\NewsDataset\WELFake_Dataset.csv')
 train_df = train_df.drop(["title"], axis=1)
 
 # train_df = train_data_short
@@ -50,8 +52,18 @@ def drop_prefix(text, prefix, n=5):
     else:
         return text
 
+#Removal of Punctuation Marks
+def remove_punctuations(text):
+    return re.sub('\[[^]]*\]', '', text)
+
+# Removal of Special Characters
+def remove_characters(text):
+    return re.sub("[^a-zA-Z]"," ",text)
+
 # remove prefix include Reuters && delete punctuation and number
 train_df["text"] = train_df["text"].apply(lambda x: drop_prefix(x, '(Reuters)'))
+train_df["text"] = train_df["text"].apply(lambda x: remove_punctuations(x))
+train_df["text"] = train_df["text"].apply(lambda x: remove_characters(x))
 train_df["text"] = train_df["text"].str.replace('[^\w\s]', '')
 train_df["text"] = train_df["text"].str.replace('\d+', '')
 
@@ -60,7 +72,7 @@ train_df['text'] = train_df['text'].apply(lambda x: re.split('https:\/\/.*', str
 train_df['text'].replace('', np.nan, inplace=True)
 
 # convert text content to lower case
-train_df['text'] = train_df['text'].apply(lambda x: x.lower())
+train_df['text'] = train_df['text'].apply(lambda x: str(x).lower())
 
 # remove stop words
 stop = stopwords.words('english')
@@ -86,6 +98,3 @@ train_df['text'] = train_df['text'].apply(lemmatize_text)
 #
 # min_df['text'] = min_df['text'].apply(lambda x: word_stemming(x))
 
-print(train_df['text'])
-print(train_df.head(100))
-print(train_df.info())
