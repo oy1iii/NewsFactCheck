@@ -18,36 +18,35 @@ true_string = true_text.split(" ")
 false_text = ' '.join(data_frame[data_frame['label']==1]['text'])
 false_string = false_text.split(" ")
 
-def draw_n_gram(string,i):
-    n_gram = (pd.Series(nltk.ngrams(string, i)).value_counts())[:15]
+def draw_n_gram(string, news_type):
+    n_gram = (pd.Series(nltk.ngrams(string, 1)).value_counts())[:15]
     n_gram_df=pd.DataFrame(n_gram)
     n_gram_df = n_gram_df.reset_index()
     n_gram_df = n_gram_df.rename(columns={"index": "word", 0: "count"})
-    print(n_gram_df.head())
-    plt.figure(figsize = (16,9))
-    return sns.barplot(x='count',y='word', data=n_gram_df)
 
-draw_n_gram(true_string,1)
-draw_n_gram(false_string,1)
+    plt.title(news_type + " news most common word")
+    plt.figure(figsize = (16, 9))
+    return sns.barplot(x='count', y='word', data=n_gram_df)
 
-fig,(true_ax, false_ax)=plt.subplots(1,2, figsize=(12,8))
+draw_n_gram(true_string, "Real")
+draw_n_gram(false_string, "Fake")
+
+fig, (true_ax, false_ax) = plt.subplots(1,2, figsize=(12,8))
 text_len=data_frame[data_frame['label']==0]['text'].str.split().map(lambda x: len(x))
-true_ax.hist(text_len,color='SkyBlue', range=[0, 10000],)
-true_ax.set_title('Fake news text')
+true_ax.hist(text_len,color='Blue', range=[0, 10000],)
+true_ax.set_title('Real news text')
 text_len=data_frame[data_frame['label']==1]['text'].str.split().map(lambda x: len(x))
-false_ax.hist(text_len,color='PeachPuff', range=[0, 10000],)
-false_ax.set_title('Real news text')
+false_ax.hist(text_len,color='Orange', range=[0, 10000],)
+false_ax.set_title('Fake news text')
 fig.suptitle('Words in texts')
+fig.supylabel('News count')
+fig.supxlabel('News content count')
 plt.show()
 
-chart=sns.countplot(x='label', data=data_frame, palette='Blues_r')
-plt.title("Fake VS Ture",
-          fontsize='20',
-          backgroundcolor='aliceblue',
-          color='blue');
+chart=sns.countplot(x='label', data=data_frame)
+plt.title("Fake VS Real", fontsize='20')
 plt.ylabel('Count of News Articles', size=15)
 plt.show()
-
 
 y = data_frame["label"]
 x = data_frame["text"]
